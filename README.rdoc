@@ -10,7 +10,7 @@ Just run the script from the command line like this:
   
 Alternatively, you could also copy the script to your path, make it executable and call it directly:
 
-  sudo mv unsavory /usr/local/bin/unsavory
+  sudo mv unsavory.rb /usr/local/bin/unsavory
   sudo chmod +x /usr/local/bin/unsavory
   unsavory
   
