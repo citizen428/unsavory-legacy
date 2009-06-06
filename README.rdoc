@@ -1,0 +1,48 @@
+= unsavory -- get rid of those stale bookmarks!
+
+unsavory is a little Ruby script which checks your Delicious bookmarks for dead links (HTTP status code 404) and removes them. Additionally it will also inform you about links which return a status code other than 200 (OK).
+
+== Usage
+
+Just run the script from the command line like this:
+
+  ruby unsavory.rb
+  
+Alternatively, you could also copy the script to your path, make it executable and call it directly:
+
+  sudo mv unsavory /usr/local/bin/unsavory
+  sudo chmod +x /usr/local/bin/unsavory
+  unsavory
+  
+It will then ask you for your Delicious username and password and will generate output similar to this (the real code does show the URLs):
+
+  Enter Delicious username: citizen428	
+  Enter Delicious password: *********
+
+  citizen428 has 664 bookmarks.
+  Processing URL #0001: OK
+  Processing URL #0002: OK
+  Processing URL #0003: OK
+  Processing URL #0004: OK
+  Processing URL #0005: OK
+  ...
+  Processing URL #0013: 405: http://...
+  ...
+  Processing URL #0074: 302: http://...
+  ...
+  Processing URL #0086: Connection reset by peer - https://...
+  
+== Warning
+
+Any link that returns an HTTP status code of 404 will be deleted without warning! There's no undo, use at your own risk!
+
+== Todo
+
+* Make sure link deletion actually worked
+* Make this into a Gem
+  
+== Meta
+
+Created by Michael Kohl
+
+Released under the MIT License: http://www.opensource.org/licenses/mit-license.php
