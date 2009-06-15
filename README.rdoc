@@ -38,9 +38,9 @@ Any link that returns an HTTP status code of 404 will be deleted without warning
 
 == Todo
 
-* Make sure link deletion actually worked
-* Make this into a Gem
-  
+# Package this as a gem
+# Make highline optional by alternatively reading in a config file
+
 == Meta
 
 Created by Michael Kohl

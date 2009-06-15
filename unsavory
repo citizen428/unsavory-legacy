@@ -1,0 +1,51 @@
+#! /usr/bin/env ruby
+
+$:.unshift File::join(File::dirname(__FILE__), '/lib')
+
+require 'rubygems'
+require 'highline'
+require 'net/http'
+require 'delicious'
+
+hl = HighLine.new
+user = hl.ask('Enter Delicious username: ')
+pass = hl.ask('Enter Delicious password: ') { |q| q.echo = "*" }
+
+delicious = Delicious.new(user, pass)
+
+begin
+  urls = delicious.get_all_urls
+rescue => e
+  puts %{
+  I couldn't get your posts from Delicious.
+
+  Either you entered your username/password wrong,
+  or the site is temporarily unreachable.
+  }
+  exit 1
+end
+
+puts "\n#{user} has #{urls.length} bookmarks."
+
+urls.each_with_index do |url, idx|
+  print "Processing URL #%04d: " % (idx+1)
+  uri = URI.parse(url)
+  response = nil
+
+  begin
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      response = http.head(uri.path.size > 0 ? uri.path : "/")
+    end
+  rescue => e 
+    puts "#{e.message} - #{url}" 
+    next
+  end
+
+  puts case response.code
+    when '200' then 'OK'
+    when '404' then 
+      delicious.delete(url)
+      "Deleted #{url}"
+    else "#{response.code}: #{url}"
+  end
+end
