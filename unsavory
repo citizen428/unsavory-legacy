@@ -1,15 +1,29 @@
 #! /usr/bin/env ruby
 
-$:.unshift File::join(File::dirname(__FILE__), '/lib')
+$:.unshift File.join(File.dirname(__FILE__), '/lib')
+%w{rubygems net/http delicious}.each { |x| require x}
+begin
+  require 'highline'
+rescue LoadError
+  no_highline = true
+end
 
-require 'rubygems'
-require 'highline'
-require 'net/http'
-require 'delicious'
+CFG_FILE = File.join(ENV['HOME'], ".#{File.basename($0)}")
 
-hl = HighLine.new
-user = hl.ask('Enter Delicious username: ')
-pass = hl.ask('Enter Delicious password: ') { |q| q.echo = "*" }
+if File.exists?(CFG_FILE)
+  puts "Using config file '#{CFG_FILE}'"
+  user, pass = File.new(CFG_FILE).gets.chomp.split(':')
+elsif !no_highline
+  hl = HighLine.new
+  user = hl.ask('Enter Delicious username: ')
+  pass = hl.ask('Enter Delicious password: ') { |q| q.echo = "*" }
+else
+  puts %{
+    Can't find config file '#{CFG_FILE}' and you 
+    don't seem to have HighLine installed. Aborting!
+  }
+  exit 1
+end
 
 delicious = Delicious.new(user, pass)
 
@@ -17,12 +31,12 @@ begin
   urls = delicious.get_all_urls
 rescue => e
   puts %{
-  I couldn't get your posts from Delicious.
+  I couldn't get your posts from Delicious!
 
   Either you entered your username/password wrong,
   or the site is temporarily unreachable.
   }
-  exit 1
+  exit 2
 end
 
 puts "\n#{user} has #{urls.length} bookmarks."
