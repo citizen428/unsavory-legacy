@@ -1,11 +1,13 @@
 #! /usr/bin/env ruby
+# Copyright (c) 2009 Michael Kohl
 
-$:.unshift File.join(File.dirname(__FILE__), '/lib')
+$:.unshift File.join(File.dirname(__FILE__), '../lib')
 %w{rubygems net/http delicious}.each { |x| require x}
+highline = true
 begin
   require 'highline'
 rescue LoadError
-  no_highline = true
+  highline = false
 end
 
 CFG_FILE = File.join(ENV['HOME'], ".#{File.basename($0)}")
@@ -13,7 +15,7 @@ CFG_FILE = File.join(ENV['HOME'], ".#{File.basename($0)}")
 if File.exists?(CFG_FILE)
   puts "Using config file '#{CFG_FILE}'"
   user, pass = File.new(CFG_FILE).gets.chomp.split(':')
-elsif !no_highline
+elsif highline
   hl = HighLine.new
   user = hl.ask('Enter Delicious username: ')
   pass = hl.ask('Enter Delicious password: ') { |q| q.echo = "*" }

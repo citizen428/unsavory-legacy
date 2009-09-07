@@ -27,3 +27,4 @@ class Delicious
       self.class.get(API_METHODS[:all], @options)
     end
 end
+

@@ -4,9 +4,13 @@ unsavory is a little Ruby script which checks your Delicious bookmarks for dead 
 
 == Usage
 
-Just run the program from the command line like this:
+After installing unsavory with 
 
-  $ ruby unsavory
+  $ gem install citizen428-unsavory
+
+you can start it from the command-line like this:
+
+  $ unsavory
 
 First the script will check if it can find the configuration file '~/.unsavory', which should have the following format:
 
@@ -16,10 +20,10 @@ In case this file doesn't exist, HighLine will be used to prompt for login crede
   
 When run, unsavory will generate output similar to this (the real code does show the URLs):
 
-  Enter Delicious username: citizen428	
+  Enter Delicious username: username
   Enter Delicious password: *********
 
-  citizen428 has 664 bookmarks.
+  username has 664 bookmarks.
   Processing URL #0001: OK
   Processing URL #0002: OK
   Processing URL #0003: OK
@@ -38,7 +42,7 @@ Any link that returns an HTTP status code of 404 will be deleted without warning
 
 == Todo
 
-# Package this as a gem
+# None right now
 
 == Author
 
