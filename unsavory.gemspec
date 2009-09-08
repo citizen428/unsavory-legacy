@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.email = 'citizen428@gmail.com'
   s.summary = 'Removes outdated links from your Delicious bookmarks'
   s.require_paths = 'lib' 
-  s.files = ['lib/delicious.rb', './unsavory']
+  s.files = %w[lib/delicious.rb bin/unsavory ./LICENSE ./README.rdoc]
   s.executable = 'unsavory'
   s.add_dependency('httparty', '>= 0.4.3')
   s.has_rdoc = false 
