@@ -3,7 +3,7 @@ require 'httparty'
 class Delicious
   include HTTParty
   base_uri 'https://api.del.icio.us/v1'
-  headers "User-Agent" => "Unsavory 0.1"
+  headers "User-Agent" => "Unsavory"
   
   API_METHODS = { 
     :all => '/posts/all', 
