@@ -28,6 +28,7 @@ else
 end
 
 delicious = Delicious.new(user, pass)
+moved = 0
 
 begin
   urls = delicious.get_all_urls
@@ -57,6 +58,14 @@ urls.each_with_index do |url, idx|
     next
   end
 
+  # handle redirects
+  if response.is_a?(Net::HTTPRedirection)
+    new_uri = URI.parse(response['location'])
+    moved += 1
+    puts "URI redirects to #{new_uri}"
+    next
+  end
+
   puts case response.code
     when '200' then 'OK'
     when '404' then 
@@ -65,3 +74,4 @@ urls.each_with_index do |url, idx|
     else "#{response.code}: #{url}"
   end
 end
+puts "\n#{moved} URIs are redirecting to new locations, you might want to fix them." if moved > 0
