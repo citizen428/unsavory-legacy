@@ -1,9 +1,9 @@
 Gem::Specification.new do |s| 
   s.name = 'unsavory' 
-  s.version = '0.3.2' 
+  s.version = '0.3.3' 
   s.author = 'Michael Kohl'
   s.email = 'citizen428@gmail.com'
-  s.summary = 'Removes outdated links from your Delicious bookmarks'
+  s.summary = 'Removes outdated links from your Pinboard bookmarks'
   s.homepage = 'http://github.com/citizen428/unsavory'
   s.require_paths = %w[lib] 
   s.files = %w[lib/delicious.rb bin/unsavory ./LICENSE ./README.rdoc]

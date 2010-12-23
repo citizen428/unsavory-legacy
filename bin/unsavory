@@ -2,7 +2,7 @@
 # Copyright (c) 2009 Michael Kohl
 
 $:.unshift File.join(File.dirname(__FILE__), '../lib')
-%w{rubygems net/http delicious}.each { |x| require x}
+%w{rubygems net/http pinboard}.each { |x| require x }
 highline = true
 begin
   require 'highline'
@@ -17,8 +17,8 @@ if File.exists?(CFG_FILE)
   user, pass = File.new(CFG_FILE).gets.chomp.split(':')
 elsif highline
   hl = HighLine.new
-  user = hl.ask('Enter Delicious username: ')
-  pass = hl.ask('Enter Delicious password: ') { |q| q.echo = "*" }
+  user = hl.ask('Enter Pinboard username: ')
+  pass = hl.ask('Enter Pinboard password: ') { |q| q.echo = "*" }
 else
   puts %{
     Can't find config file '#{CFG_FILE}' and you 
@@ -27,14 +27,14 @@ else
   exit 1
 end
 
-delicious = Delicious.new(user, pass)
+pinboard = Pinboard.new(user, pass)
 moved = 0
 
 begin
-  urls = delicious.get_all_urls
+  urls = pinboard.get_all_urls
 rescue => e
   puts %{
-  I couldn't get your posts from Delicious!
+  I couldn't get your posts from Pinboard!
 
   Either you entered your username/password wrong,
   or the site is temporarily unreachable.
@@ -69,7 +69,7 @@ urls.each_with_index do |url, idx|
   puts case response.code
     when '200' then 'OK'
     when '404' then 
-      delicious.delete(url)
+      pinboard.delete(url)
       "Deleted #{url}"
     else "#{response.code}: #{url}"
   end
