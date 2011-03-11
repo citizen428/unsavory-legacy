@@ -6,43 +6,35 @@ unsavory is a little Ruby script which checks your Pinboard bookmarks for dead l
 
 After installing unsavory with 
 
-  $ gem install citizen428-unsavory
+  $ gem install unsavory
 
 you can start it from the command-line like this:
 
   $ unsavory
 
-First the script will check if it can find the configuration file '~/.unsavory', which should have the following format:
+It will first check if it can find the configuration file '~/.unsavory', which should have the following format:
 
   user:password
   
 In case this file doesn't exist, HighLine will be used to prompt for login credentials. If this gem isn't available, the script will display an error message and abort.
   
-When run, unsavory will generate output similar to this (the real code does show the URLs):
+When run, unsavory will generate display a progressbar and an estimate time until completion:
+  
+  Enter Pinboard username: citizen428
+  Enter Pinboard password: *************
 
-  Enter Pinboard username: username
-  Enter Pinboard password: *********
+  citizen428 has 774 bookmarks.
+  URLs:            3% |o                                         | ETA:  00:09:34
 
-  username has 664 bookmarks.
-  Processing URL #0001: OK
-  Processing URL #0002: OK
-  Processing URL #0003: OK
-  Processing URL #0004: OK
-  Processing URL #0005: OK
-  ...
-  Processing URL #0013: 405: http://...
-  ...
-  Processing URL #0074: 302: http://...
-  ...
-  Processing URL #0086: Connection reset by peer - https://...
+It will also create a logfile name 'unsavory.log' in the directory where it was started. The log contains information on deleted URLs, as well as redirects and all HTTP response codes other than 200 (OK).
   
 == Warning
 
-Any link that returns an HTTP status code of 404 will be deleted without warning! There's no undo, use at your own risk!
+Any link that returns an HTTP status code of 404 will be deleted without warning. There's no undo, use at your own risk!
 
 == Todo
 
-# None right now
+# None at the moment.
 
 == Author
 
