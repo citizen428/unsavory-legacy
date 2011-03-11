@@ -2,7 +2,7 @@
 # Copyright (c) 2009 Michael Kohl
 
 $:.unshift File.join(File.dirname(__FILE__), '../lib')
-%w{rubygems net/http pinboard}.each { |x| require x }
+%w{rubygems net/http pinboard logger progressbar}.each { |x| require x }
 highline = true
 begin
   require 'highline'
@@ -27,6 +27,8 @@ else
   exit 1
 end
 
+logger = Logger.new('unsavory.log')
+logger.info "Unsavory started: #{Time.now.strftime('%Y-%m-%d %H:%M')}"
 pinboard = Pinboard.new(user, pass)
 moved = 0
 
@@ -44,8 +46,10 @@ end
 
 puts "\n#{user} has #{urls.length} bookmarks."
 
+pbar = ProgressBar.new("URLs", urls.size)
+
 urls.each_with_index do |url, idx|
-  print "Processing URL #%04d: " % (idx+1)
+  pbar.inc
   uri = URI.parse(url)
   response = nil
 
@@ -54,7 +58,7 @@ urls.each_with_index do |url, idx|
       response = http.head(uri.path.size > 0 ? uri.path : "/")
     end
   rescue => e 
-    puts "#{e.message} - #{url}" 
+    logger.error "#{e.message} - #{url}" 
     next
   end
 
@@ -62,16 +66,17 @@ urls.each_with_index do |url, idx|
   if response.is_a?(Net::HTTPRedirection)
     new_uri = URI.parse(response['location'])
     moved += 1
-    puts "URI redirects to #{new_uri}"
+    logger.info "#{url} redirects to #{new_uri}"
     next
   end
 
-  puts case response.code
-    when '200' then 'OK'
-    when '404' then 
-      pinboard.delete(url)
-      "Deleted #{url}"
-    else "#{response.code}: #{url}"
+  if response.code == '404'
+    pinboard.delete(url)
+    logger.info "Deleted #{url}"
+  elsif response.code != '200' 
+    logger.info "#{response.code}: #{url}"
   end
 end
+pbar.finish
+logger.close
 puts "\n#{moved} URIs are redirecting to new locations, you might want to fix them." if moved > 0
