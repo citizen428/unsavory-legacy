@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.summary = 'Removes outdated links from your Pinboard bookmarks'
   s.homepage = 'http://github.com/citizen428/unsavory'
   s.require_paths = %w[lib] 
-  s.files = %w[lib/delicious.rb bin/unsavory ./LICENSE ./README.rdoc]
+  s.files = %w[lib/pinboard.rb bin/unsavory ./LICENSE ./README.rdoc]
   s.executable = 'unsavory'
   s.add_dependency('httparty', '>= 0.4.3')
   s.has_rdoc = false 
