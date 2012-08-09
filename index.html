@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Unsavory by citizen428</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Unsavory</h1>
+        <p class="header">Removes outdated links from your Pinboard bookmarks</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/citizen428/unsavory/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/citizen428/unsavory/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/citizen428/unsavory">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/citizen428">citizen428</a></p>
+
+
+      </header>
+      <section>
+        <h1>unsavory – get rid of those stale bookmarks!</h1>
+
+<p><code>unsavory</code> is a little Ruby script which checks your Pinboard bookmarks for dead links (HTTP status code 404) and removes them. Additionally it will also inform you about links which return a status code other than 200 (OK).</p>
+
+<h2>Usage</h2>
+
+<p>After installing unsavory with </p>
+
+<pre><code>$ gem install unsavory
+</code></pre>
+
+<p>you can start it from the command-line like this:</p>
+
+<pre><code>$ unsavory
+</code></pre>
+
+<p>It will first check if it can find the configuration file <code>~/.unsavory</code>, which should have the following format:</p>
+
+<pre><code>user:password
+</code></pre>
+
+<p>In case this file doesn't exist, <code>HighLine</code> will be used to prompt for login credentials. If this gem isn't available, the script will display an error message and abort.</p>
+
+<p>When run, unsavory will display a progressbar and an estimated time until completion:</p>
+
+<pre><code>Enter Pinboard username: citizen428
+Enter Pinboard password: *************
+
+citizen428 has 774 bookmarks.
+URLs:            3% |o                                         | ETA:  00:09:34
+</code></pre>
+
+<p>It will also create a logfile name <code>unsavory.log</code> in the directory where it was started. The log contains information on deleted URLs, as well as redirects and all HTTP response codes other than 200 (OK).</p>
+
+<h2>Warning</h2>
+
+<p>Any link that returns an HTTP status code of 404 will be deleted without warning. There's no undo, use at your own risk!</p>
+
+<h2>Todo</h2>
+
+<ul>
+<li>None at the moment.</li>
+</ul><h2>Author</h2>
+
+<p>Michael Kohl </p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
