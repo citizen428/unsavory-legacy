@@ -1,6 +1,6 @@
 Gem::Specification.new do |s| 
   s.name = 'unsavory' 
-  s.version = '1.0.0' 
+  s.version = '1.0.1' 
   s.author = 'Michael Kohl'
   s.email = 'citizen428@gmail.com'
   s.summary = 'Removes outdated links from your Pinboard bookmarks'

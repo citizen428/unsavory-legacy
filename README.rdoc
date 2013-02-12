@@ -34,7 +34,8 @@ Any link that returns an HTTP status code of 404 will be deleted without warning
 
 == Todo
 
-# None at the moment.
+# Write tests.
+# Use tests to clean up code.
 
 == Author
 
