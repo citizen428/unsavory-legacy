@@ -50,7 +50,8 @@ pbar = ProgressBar.new("URLs", urls.size)
 
 urls.each_with_index do |url, idx|
   pbar.inc
-  uri = URI.parse(url)
+  # Hackety fix for #1
+  uri = URI.parse(url) rescue next
   response = nil
 
   begin
