@@ -21,7 +21,7 @@ elsif highline
   pass = hl.ask('Enter Pinboard password: ') { |q| q.echo = "*" }
 else
   puts %{
-    Can't find config file '#{CFG_FILE}' and you 
+    Can't find config file '#{CFG_FILE}' and you
     don't seem to have HighLine installed. Aborting!
   }
   exit 1
@@ -58,8 +58,9 @@ urls.each_with_index do |url, idx|
     Net::HTTP.start(uri.host, uri.port) do |http|
       response = http.head(uri.path.size > 0 ? uri.path : "/")
     end
-  rescue => e 
-    logger.error "#{e.message} - #{url}" 
+  # In 1.8, TimeoutError does not inherit from StandardError
+  rescue StandardError, Timeout::Error => e
+    logger.error "#{e.message} - #{url}"
     next
   end
 
@@ -74,7 +75,7 @@ urls.each_with_index do |url, idx|
   if response.code == '404'
     pinboard.delete(url)
     logger.info "Deleted #{url}"
-  elsif response.code != '200' 
+  elsif response.code != '200'
     logger.info "#{response.code}: #{url}"
   end
 end
