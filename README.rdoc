@@ -36,6 +36,7 @@ Any link that returns an HTTP status code of 404 will be deleted without warning
 
 # Write tests.
 # Use tests to clean up code.
+# Add option to replace links with Archive.org links
 
 == Author
 
