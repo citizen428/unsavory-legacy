@@ -1,10 +1,10 @@
 = unsavory -- get rid of those stale bookmarks!
 
-unsavory is a little Ruby script which checks your Pinboard bookmarks for dead links (HTTP status code 404) and removes them. Additionally it will also inform you about links which return a status code other than 200 (OK).
+unsavory is a little Ruby script which checks your Pinboard bookmarks for dead links (ENOENT or HTTP status code 404) and removes them. Additionally it will also inform you about links which return a status code other than 200 (OK).
 
 == Usage
 
-After installing unsavory with 
+After installing unsavory with
 
   $ gem install unsavory
 
@@ -15,11 +15,11 @@ you can start it from the command-line like this:
 It will first check if it can find the configuration file '~/.unsavory', which should have the following format:
 
   user:password
-  
+
 In case this file doesn't exist, HighLine will be used to prompt for login credentials. If this gem isn't available, the script will display an error message and abort.
-  
+
 When run, unsavory will generate display a progressbar and an estimate time until completion:
-  
+
   Enter Pinboard username: citizen428
   Enter Pinboard password: *************
 
@@ -27,7 +27,7 @@ When run, unsavory will generate display a progressbar and an estimate time unti
   URLs:            3% |o                                         | ETA:  00:09:34
 
 It will also create a logfile name 'unsavory.log' in the directory where it was started. The log contains information on deleted URLs, as well as redirects and all HTTP response codes other than 200 (OK).
-  
+
 == Warning
 
 Any link that returns an HTTP status code of 404 will be deleted without warning. There's no undo, use at your own risk!
