@@ -60,6 +60,7 @@ urls.each_with_index do |url, idx|
     end
   # In 1.8, TimeoutError does not inherit from StandardError
   rescue StandardError, Timeout::Error => e
+    pinboard.delete(url) if e.is_a?(Error::ENOENT)
     logger.error "#{e.message} - #{url}"
     next
   end
