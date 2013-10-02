@@ -9,7 +9,6 @@ module Utilities
       else
         begin
           require 'highline'
-
           hl = HighLine.new
           user = hl.ask('Enter Pinboard username: ')
           pass = hl.ask('Enter Pinboard password: ') { |q| q.echo = "*" }
