@@ -1,68 +1,68 @@
 #! /usr/bin/env ruby
-# Copyright (c) 2009 Michael Kohl
+# Copyright (c) 2009-2013 Michael Kohl
 
-$:.unshift File.join(File.dirname(__FILE__), '../lib')
-%w{rubygems net/http utilities pinboard logger progressbar}.each { |x| require x }
+require "rubygems" # for the 1.8 users
+require "logger"
+require "net/http"
+require "progressbar"
+require_relative "../lib/pinboard_client.rb"
+require_relative "../lib/utilities.rb"
 
-user, pass = Utilities.get_pinboard_credentials
-pinboard = Pinboard.new(user, pass)
-
+user, pass = Utilities.get_credentials
+pinboard_client = PinboardClient.new(user, pass)
 logger = Logger.new('unsavory.log')
+
 logger.info "Unsavory started: #{Time.now.strftime('%Y-%m-%d %H:%M')}"
 
-moved = 0
-
-begin
-  urls = pinboard.get_all_urls
-rescue => e
-  puts %{
-  I couldn't get your posts from Pinboard!
-
-  Either you entered your username/password wrong,
-  or the site is temporarily unreachable.
-  }
-  exit 2
+puts "Retrieving URLs"
+urls = pinboard_client.get_urls
+unless urls
+  puts "\nCould not retrieve URLs!\nPlease check your login credentials."
+  exit 1
 end
-
 puts "\n#{user} has #{urls.length} bookmarks."
 
 pbar = ProgressBar.new("URLs", urls.size)
+moved = 0
 
 urls.each_with_index do |url, idx|
   pbar.inc
-  # Hackety fix for #1
+  delete = false
+
+  # Hackety fix for issue #1
   uri = URI.parse(url) rescue next
-  response = nil
 
   begin
     Net::HTTP.start(uri.host, uri.port) do |http|
-      response = http.head(uri.path.size > 0 ? uri.path : "/")
+      response = http.head(uri.path.empty? ? '/' : uri.path)
+
+      # handle redirects
+      if response.is_a?(Net::HTTPRedirection)
+        moved += 1
+        logger.info "#{url} redirects to #{response['location']}"
+        next
+      end
+
+      if response.code == '404'
+        delete = true
+      elsif response.code != '200'
+        logger.info "#{response.code}: #{url}"
+      end
     end
   rescue Errno::ENOENT
-    pinboard.delete(url)
-    logger.info "Deleted #{url}"
-    next
+    delete = true
   # In 1.8, TimeoutError does not inherit from StandardError
   rescue StandardError, Timeout::Error => e
     logger.error "#{e.message} - #{url}"
-    next
   end
 
-  # handle redirects
-  if response.is_a?(Net::HTTPRedirection)
-    new_uri = URI.parse(response['location'])
-    moved += 1
-    logger.info "#{url} redirects to #{new_uri}"
-    next
-  end
-
-  if response.code == '404'
-    pinboard.delete(url)
+  if delete
+    pinboard_client.delete(url)
     logger.info "Deleted #{url}"
-  elsif response.code != '200'
-    logger.info "#{response.code}: #{url}"
   end
 end
+
 pbar.finish
 logger.close
+
 puts "\n#{moved} URIs are redirecting to new locations, you might want to fix them." if moved > 0
