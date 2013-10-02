@@ -14,7 +14,7 @@ CFG_FILE = File.join(ENV['HOME'], ".#{File.basename($0)}")
 
 if File.exists?(CFG_FILE)
   puts "Using config file '#{CFG_FILE}'"
-  user, pass = File.new(CFG_FILE).gets.chomp.split(':')
+  user, pass = File.new(CFG_FILE).gets.chomp.split(':', 2)
 elsif highline
   hl = HighLine.new
   user = hl.ask('Enter Pinboard username: ')
