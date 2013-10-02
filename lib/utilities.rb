@@ -2,7 +2,7 @@ module Utilities
   class << self
     CFG_FILE = File.join(ENV['HOME'], ".#{File.basename($0)}")
 
-    def get_pinboard_credentials
+    def get_credentials
       if File.exists?(CFG_FILE)
         puts "Using config file '#{CFG_FILE}'"
         user, pass = File.new(CFG_FILE).gets.chomp.split(':', 2)
