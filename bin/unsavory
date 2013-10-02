@@ -2,34 +2,14 @@
 # Copyright (c) 2009 Michael Kohl
 
 $:.unshift File.join(File.dirname(__FILE__), '../lib')
-%w{rubygems net/http pinboard logger progressbar}.each { |x| require x }
-highline = true
-begin
-  require 'highline'
-rescue LoadError
-  highline = false
-end
+%w{rubygems net/http utilities pinboard logger progressbar}.each { |x| require x }
 
-CFG_FILE = File.join(ENV['HOME'], ".#{File.basename($0)}")
-
-if File.exists?(CFG_FILE)
-  puts "Using config file '#{CFG_FILE}'"
-  user, pass = File.new(CFG_FILE).gets.chomp.split(':')
-elsif highline
-  hl = HighLine.new
-  user = hl.ask('Enter Pinboard username: ')
-  pass = hl.ask('Enter Pinboard password: ') { |q| q.echo = "*" }
-else
-  puts %{
-    Can't find config file '#{CFG_FILE}' and you
-    don't seem to have HighLine installed. Aborting!
-  }
-  exit 1
-end
+user, pass = Utilities.get_pinboard_credentials
+pinboard = Pinboard.new(user, pass)
 
 logger = Logger.new('unsavory.log')
 logger.info "Unsavory started: #{Time.now.strftime('%Y-%m-%d %H:%M')}"
-pinboard = Pinboard.new(user, pass)
+
 moved = 0
 
 begin
