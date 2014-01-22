@@ -8,8 +8,8 @@ require "progressbar"
 require_relative "../lib/pinboard_client.rb"
 require_relative "../lib/utilities.rb"
 
-user, pass, opts = Utilities.initialize
-pinboard_client = PinboardClient.new(user, pass)
+opts = Utilities.get_options
+pinboard_client = PinboardClient.new(opts[:user], opts[:pass])
 logger = Logger.new('unsavory.log')
 
 logger.info "Unsavory started: #{Time.now.strftime('%Y-%m-%d %H:%M')}"
@@ -20,7 +20,7 @@ unless urls
   puts "\nCould not retrieve URLs!\nPlease check your login credentials."
   exit 1
 end
-puts "\n#{user} has #{urls.length} bookmarks."
+puts "\n#{opts[:user]} has #{urls.length} bookmarks."
 puts "You are using dry run mode. No links will be deleted!\n\n" if opts[:dry_run]
 
 pbar = ProgressBar.new("URLs", urls.size)

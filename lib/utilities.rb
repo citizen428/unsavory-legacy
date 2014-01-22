@@ -4,8 +4,8 @@ module Utilities
   class << self
     CFG_FILE = File.join(ENV['HOME'], ".#{File.basename($0)}")
 
-    def initialize
-      [*get_credentials, get_options]
+    def get_options
+      get_credentials.merge(parse_options)
     end
 
     private
@@ -24,10 +24,10 @@ module Utilities
           exit 1
         end
       end
-      [user, pass]
+      {:user => user, :pass => pass}
     end
 
-    def get_options
+    def parse_options
       options = {}
       opts = GetoptLong.new(['--dry-run', '-n', GetoptLong::NO_ARGUMENT])
 
