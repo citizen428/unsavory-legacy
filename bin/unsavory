@@ -28,12 +28,16 @@ moved = 0
 urls.each_with_index do |url, idx|
   pbar.inc
   delete = false
+  use_ssl = false
 
   # Hackety fix for issue #1
   uri = URI.parse(url) rescue next
+  if uri.scheme == "https"
+    use_ssl = true
+  end
 
   begin
-    Net::HTTP.start(uri.host, uri.port) do |http|
+    Net::HTTP.start(uri.host, uri.port, :use_ssl => use_ssl) do |http|
       response = http.head(uri.path.empty? ? '/' : uri.path)
 
       # handle redirects
