@@ -3,6 +3,7 @@
 
 require "rubygems" # for the 1.8 users
 require "logger"
+require "getoptlong"
 require "net/http"
 require "progressbar"
 require_relative "../lib/pinboard_client.rb"
@@ -11,6 +12,15 @@ require_relative "../lib/utilities.rb"
 user, pass = Utilities.get_credentials
 pinboard_client = PinboardClient.new(user, pass)
 logger = Logger.new('unsavory.log')
+
+opts = GetoptLong.new(['--dry-run', '-n', GetoptLong::NO_ARGUMENT])
+dry_run = false
+opts.each do |opt, arg|
+  case opt
+  when '--dry-run'
+    dry_run = true
+  end
+end
 
 logger.info "Unsavory started: #{Time.now.strftime('%Y-%m-%d %H:%M')}"
 
@@ -28,12 +38,16 @@ moved = 0
 urls.each_with_index do |url, idx|
   pbar.inc
   delete = false
+  use_ssl = false
 
   # Hackety fix for issue #1
   uri = URI.parse(url) rescue next
+  if uri.scheme == "https"
+    use_ssl = true
+  end
 
   begin
-    Net::HTTP.start(uri.host, uri.port) do |http|
+    Net::HTTP.start(uri.host, uri.port, :use_ssl => use_ssl) do |http|
       response = http.head(uri.path.empty? ? '/' : uri.path)
 
       # handle redirects
@@ -43,14 +57,14 @@ urls.each_with_index do |url, idx|
         next
       end
 
-      if response.code == '404'
+      if response.code == '404' && !dry_run
         delete = true
       elsif response.code != '200'
         logger.info "#{response.code}: #{url}"
       end
     end
   rescue Errno::ENOENT
-    delete = true
+    delete = true if !dry_run
   # In 1.8, TimeoutError does not inherit from StandardError
   rescue StandardError, Timeout::Error => e
     logger.error "#{e.message} - #{url}"
