@@ -1,7 +1,14 @@
+require 'getoptlong'
+
 module Utilities
   class << self
     CFG_FILE = File.join(ENV['HOME'], ".#{File.basename($0)}")
 
+    def initialize
+      [*get_credentials, get_options]
+    end
+
+    private
     def get_credentials
       if File.exists?(CFG_FILE)
         puts "Using config file '#{CFG_FILE}'"
@@ -18,6 +25,19 @@ module Utilities
         end
       end
       [user, pass]
+    end
+
+    def get_options
+      options = {}
+      opts = GetoptLong.new(['--dry-run', '-n', GetoptLong::NO_ARGUMENT])
+
+      opts.each do |opt, _|
+        case opt
+        when '--dry-run'
+          options[:dry_run] = true
+        end
+      end
+      options
     end
   end
 end

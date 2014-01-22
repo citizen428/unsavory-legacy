@@ -1,26 +1,16 @@
 #! /usr/bin/env ruby
-# Copyright (c) 2009-2013 Michael Kohl
+# Copyright (c) 2009-2014 Michael Kohl
 
 require "rubygems" # for the 1.8 users
 require "logger"
-require "getoptlong"
 require "net/http"
 require "progressbar"
 require_relative "../lib/pinboard_client.rb"
 require_relative "../lib/utilities.rb"
 
-user, pass = Utilities.get_credentials
+user, pass, opts = Utilities.initialize
 pinboard_client = PinboardClient.new(user, pass)
 logger = Logger.new('unsavory.log')
-
-opts = GetoptLong.new(['--dry-run', '-n', GetoptLong::NO_ARGUMENT])
-dry_run = false
-opts.each do |opt, arg|
-  case opt
-  when '--dry-run'
-    dry_run = true
-  end
-end
 
 logger.info "Unsavory started: #{Time.now.strftime('%Y-%m-%d %H:%M')}"
 
@@ -31,6 +21,7 @@ unless urls
   exit 1
 end
 puts "\n#{user} has #{urls.length} bookmarks."
+puts "You are using dry run mode. No links will be deleted!\n\n" if opts[:dry_run]
 
 pbar = ProgressBar.new("URLs", urls.size)
 moved = 0
@@ -57,17 +48,21 @@ urls.each_with_index do |url, idx|
         next
       end
 
-      if response.code == '404' && !dry_run
+      if response.code == '404' && !opts[:dry_run]
         delete = true
       elsif response.code != '200'
         logger.info "#{response.code}: #{url}"
       end
     end
-  rescue Errno::ENOENT
-    delete = true if !dry_run
+  rescue Errno::ENOENT => e
+    if opts[:dry_run]
+      logger.info "#{e.message}: #{url}"
+    else
+      delete = true
+    end
   # In 1.8, TimeoutError does not inherit from StandardError
   rescue StandardError, Timeout::Error => e
-    logger.error "#{e.message} - #{url}"
+    logger.error "#{e.message}: #{url}"
   end
 
   if delete
