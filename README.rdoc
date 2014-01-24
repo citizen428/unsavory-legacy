@@ -28,6 +28,8 @@ When run, unsavory will generate display a progressbar and an estimate time unti
 
 It will also create a logfile name 'unsavory.log' in the directory where it was started. The log contains information on deleted URLs, as well as redirects and all HTTP response codes other than 200 (OK).
 
+If you don't want to actually delete links, please use the '--dry-run' option (also available as '-n').
+
 == Warning
 
 Any link that returns an HTTP status code of 404 will be deleted without warning. There's no undo, use at your own risk!
