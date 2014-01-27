@@ -29,12 +29,22 @@ module Utilities
 
     def parse_options
       options = {}
-      opts = GetoptLong.new(['--dry-run', '-n', GetoptLong::NO_ARGUMENT])
+      opts = GetoptLong.new(
+        ['--dry-run', '-n', GetoptLong::NO_ARGUMENT],
+        ['--http-proxy', '-p', GetoptLong::REQUIRED_ARGUMENT]
+      )
 
-      opts.each do |opt, _|
+      opts.each do |opt, arg|
         case opt
         when '--dry-run'
           options[:dry_run] = true
+        when '--http-proxy'
+          options[:http_proxy] = true
+          uri = URI.parse(arg)
+          options[:proxy_host] = uri.host
+          options[:proxy_port] = uri.port || 8080
+          options[:proxy_user] = uri.user
+          options[:proxy_pass] = uri.password
         end
       end
       options
