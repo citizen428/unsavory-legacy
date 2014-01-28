@@ -7,7 +7,7 @@ class PinboardClient
 
   def initialize(opts)
     @options = {:basic_auth => {:username => opts[:user], :password => opts[:pass]}}
-    self.class.http_proxy opts[:proxy_host], opts[:proxy_port], opts[:proxy_user], opts[:proxy_pass]
+    self.class.http_proxy(*opts.values_at(:proxy_host, :proxy_port, :proxy_user, :proxy_pass))
   end
 
   def get_urls

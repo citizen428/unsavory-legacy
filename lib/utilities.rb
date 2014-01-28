@@ -2,7 +2,8 @@ require 'getoptlong'
 
 module Utilities
   class << self
-    CFG_FILE = File.join(ENV['HOME'], ".#{File.basename($0)}")
+    PROGRAM_NAME = File.basename($0)
+    CFG_FILE = File.join(ENV['HOME'], ".#{PROGRAM_NAME}")
 
     def get_options
       get_credentials.merge(parse_options)
@@ -31,11 +32,26 @@ module Utilities
       options = {}
       opts = GetoptLong.new(
         ['--dry-run', '-n', GetoptLong::NO_ARGUMENT],
-        ['--http-proxy', '-p', GetoptLong::REQUIRED_ARGUMENT]
+        ['--http-proxy', '-p', GetoptLong::REQUIRED_ARGUMENT],
+        ['--help', '-h', GetoptLong::NO_ARGUMENT]
       )
 
       opts.each do |opt, arg|
         case opt
+        when '--help'
+          puts <<EOF
+#{PROGRAM_NAME} [OPTIONS]
+
+-h, --help:
+   show help
+
+-d, --dry-run:
+   only log outdated links without deleting them
+
+-p, --http-proxy:
+   specify an HTTP proxy
+EOF
+          exit 0
         when '--dry-run'
           options[:dry_run] = true
         when '--http-proxy'
@@ -47,6 +63,11 @@ module Utilities
           options[:proxy_pass] = uri.password
         end
       end
+      # if the first arg is nil, Net::HTTP:Proxy returns a normal Net::HTTP object
+      options[:http_client] = Net::HTTP::Proxy(*options.values_at(:proxy_host,
+                                                                  :proxy_port,
+                                                                  :proxy_user,
+                                                                  :proxy_pass))
       options
     end
   end
