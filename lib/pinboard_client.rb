@@ -5,8 +5,9 @@ class PinboardClient
   base_uri 'https://api.pinboard.in/v1/'
   headers "User-Agent" => "Unsavory"
 
-  def initialize(user, password)
-    @options = {:basic_auth => {:username => user, :password => password}}
+  def initialize(opts)
+    @options = {:basic_auth => {:username => opts[:user], :password => opts[:pass]}}
+    self.class.http_proxy opts[:proxy_host], opts[:proxy_port], opts[:proxy_user], opts[:proxy_pass]
   end
 
   def get_urls

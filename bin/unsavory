@@ -9,7 +9,7 @@ require_relative "../lib/pinboard_client.rb"
 require_relative "../lib/utilities.rb"
 
 opts = Utilities.get_options
-pinboard_client = PinboardClient.new(opts[:user], opts[:pass])
+pinboard_client = PinboardClient.new(opts)
 logger = Logger.new('unsavory.log')
 
 logger.info "Unsavory started: #{Time.now.strftime('%Y-%m-%d %H:%M')}"
@@ -26,6 +26,12 @@ puts "You are using dry run mode. No links will be deleted!\n\n" if opts[:dry_ru
 pbar = ProgressBar.new("URLs", urls.size)
 moved = 0
 
+if opts[:http_proxy]
+  Client = Net::HTTP::Proxy(opts[:proxy_host], opts[:proxy_port], opts[:proxy_user], opts[:proxy_pass])
+else
+  Client = Net::HTTP
+end
+
 urls.each_with_index do |url, idx|
   pbar.inc
   delete = false
@@ -38,7 +44,7 @@ urls.each_with_index do |url, idx|
   end
 
   begin
-    Net::HTTP.start(uri.host, uri.port, :use_ssl => use_ssl) do |http|
+    Client.start(uri.host, uri.port, :use_ssl => use_ssl) do |http|
       response = http.head(uri.path.empty? ? '/' : uri.path)
 
       # handle redirects
