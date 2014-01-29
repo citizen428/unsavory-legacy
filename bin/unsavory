@@ -10,7 +10,12 @@ require_relative "../lib/utilities.rb"
 
 opts = Utilities.get_options
 pinboard_client = PinboardClient.new(opts)
-logger = Logger.new('unsavory.log')
+# if the first arg is nil, Net::HTTP:Proxy returns a Net::HTTP object
+http_client = Net::HTTP::Proxy(*opts.values_at(:proxy_host,
+                                               :proxy_port,
+                                               :proxy_user,
+                                               :proxy_pass))
+logger = Logger.new(opts[:logfile])
 
 logger.info "Unsavory started: #{Time.now.strftime('%Y-%m-%d %H:%M')}"
 
@@ -21,12 +26,15 @@ unless urls
   exit 1
 end
 puts "\n#{opts[:user]} has #{urls.length} bookmarks."
-puts "You are using dry run mode. No links will be deleted!\n\n" if opts[:dry_run]
 
-pbar = ProgressBar.new("URLs", urls.size)
+if opts[:dry_run]
+  puts "You are using dry run mode. No links will be deleted!\n\n"
+end
+
+pbar = ProgressBar.new("Checking", urls.size)
 moved = 0
 
-urls.each_with_index do |url, idx|
+urls.each do |url|
   pbar.inc
   delete = false
   use_ssl = false
@@ -38,10 +46,9 @@ urls.each_with_index do |url, idx|
   end
 
   begin
-    opts[:http_client].start(uri.host, uri.port, :use_ssl => use_ssl) do |http|
+    http_client.start(uri.host, uri.port, :use_ssl => use_ssl) do |http|
       response = http.head(uri.path.empty? ? '/' : uri.path)
 
-      # handle redirects
       if response.is_a?(Net::HTTPRedirection)
         moved += 1
         logger.info "#{url} redirects to #{response['location']}"
@@ -74,4 +81,6 @@ end
 pbar.finish
 logger.close
 
-puts "\n#{moved} URIs are redirecting to new locations, you might want to fix them." if moved > 0
+if moved > 0
+  puts "\n#{moved} URIs are redirecting to new locations, you might want to fix them."
+end

@@ -12,7 +12,6 @@ module Utilities
     private
     def get_credentials
       if File.exists?(CFG_FILE)
-        puts "Using config file '#{CFG_FILE}'"
         user, pass = File.new(CFG_FILE).gets.chomp.split(':', 2)
       else
         begin
@@ -33,6 +32,7 @@ module Utilities
       opts = GetoptLong.new(
         ['--dry-run', '-n', GetoptLong::NO_ARGUMENT],
         ['--http-proxy', '-p', GetoptLong::REQUIRED_ARGUMENT],
+        ['--log-file', '-l', GetoptLong::REQUIRED_ARGUMENT],
         ['--help', '-h', GetoptLong::NO_ARGUMENT]
       )
 
@@ -49,7 +49,10 @@ module Utilities
    only log outdated links without deleting them
 
 -p, --http-proxy:
-   specify an HTTP proxy
+   specify an HTTP proxy (e.g. --http-proxy="http://webproxy:8080")
+
+-l, --log-file:
+   location of the log file (default: ./unsavory.log)
 EOF
           exit 0
         when '--dry-run'
@@ -61,13 +64,10 @@ EOF
           options[:proxy_port] = uri.port || 8080
           options[:proxy_user] = uri.user
           options[:proxy_pass] = uri.password
+        when '--log-file'
+          options[:logfile] = File.expand_path(arg)
         end
       end
-      # if the first arg is nil, Net::HTTP:Proxy returns a normal Net::HTTP object
-      options[:http_client] = Net::HTTP::Proxy(*options.values_at(:proxy_host,
-                                                                  :proxy_port,
-                                                                  :proxy_user,
-                                                                  :proxy_pass))
       options
     end
   end

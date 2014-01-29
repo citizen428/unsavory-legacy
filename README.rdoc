@@ -2,13 +2,29 @@
 
 unsavory is a little Ruby script which checks your Pinboard bookmarks for dead links (ENOENT or HTTP status code 404) and removes them. Additionally it will also inform you about links which return a status code other than 200 (OK).
 
-== Usage
-
-After installing unsavory with
+== Installation
 
   $ gem install unsavory
 
-you can start it from the command-line like this:
+== Options
+
+  unsavory [OPTIONS]
+
+  -h, --help:
+     show help
+
+  -d, --dry-run:
+     only log outdated links without deleting them
+
+  -p, --http-proxy:
+     specify an HTTP proxy (e.g. --http-proxy="http://webproxy:8080")
+
+  -l, --log-file:
+     location of the log file (default: ./unsavory.log)
+
+== Usage
+
+You can start the program from the command-line like this:
 
   $ unsavory
 
@@ -18,15 +34,15 @@ It will first check if it can find the configuration file '~/.unsavory', which s
 
 In case this file doesn't exist, HighLine will be used to prompt for login credentials. If this gem isn't available, the script will display an error message and abort.
 
-When run, unsavory will generate display a progressbar and an estimate time until completion:
+While running unsavory will display a progressbar and an estimated time until completion:
 
   Enter Pinboard username: citizen428
   Enter Pinboard password: *************
 
   citizen428 has 774 bookmarks.
-  URLs:            3% |o                                         | ETA:  00:09:34
+  Checking:        3% |o                                         | ETA:  00:09:34
 
-It will also create a logfile name 'unsavory.log' in the directory where it was started. The log contains information on deleted URLs, as well as redirects and all HTTP response codes other than 200 (OK).
+It will also create a logfile which contains information on deleted URLs, as well as redirects and all HTTP response codes other than 200 (OK).
 
 If you don't want to actually delete links, please use the '--dry-run' option (also available as '-n').
 
@@ -39,10 +55,12 @@ Any link that returns an HTTP status code of 404 will be deleted without warning
 # Write tests.
 # Use tests to clean up code.
 # Add option to replace links with Archive.org links
+# Add option to update redirects
 
 == Thanks
 
 # thelibrarian[https://github.com/thelibrarian]: for implementing HTTPS support and the '--dry-run' option
+# thomd[https://github.com/thomd]: for adding proxy support
 
 == Author
 
