@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'unsavory'
-  s.version = '1.3'
+  s.version = '1.4'
   s.author = 'Michael Kohl'
   s.email = 'citizen428@gmail.com'
   s.summary = 'Removes outdated links from your Pinboard bookmarks'
@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.files = %w[lib/pinboard_client.rb lib/utilities.rb bin/unsavory ./README.rdoc]
   s.executable = 'unsavory'
   s.add_dependency('httparty', '>= 0.4.3')
-  s.add_dependency('progressbar', '>= 0.9.0')
+  s.add_dependency('progressbar', '>= 1.8.1')
   s.has_rdoc = false
   s.license = 'MIT'
 end
