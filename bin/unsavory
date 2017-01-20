@@ -31,11 +31,11 @@ if opts[:dry_run]
   puts "You are using dry run mode. No links will be deleted!\n\n"
 end
 
-pbar = ProgressBar.new("Checking", urls.size)
+pbar = ProgressBar.create(:title => "Checking", :total => urls.size)
 moved = 0
 
 urls.each do |url|
-  pbar.inc
+  pbar.increment
   delete = false
   use_ssl = false
 
