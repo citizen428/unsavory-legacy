@@ -1,3 +1,6 @@
+*Discontinued!* The new version is written in Go and can be found at https://github.com/citizen428/unsavory.
+
+
 = unsavory -- get rid of those stale bookmarks!
 
 unsavory is a little Ruby script which checks your Pinboard bookmarks for dead links (ENOENT or HTTP status code 404) and removes them. Additionally it will also inform you about links which return a status code other than 200 (OK).
